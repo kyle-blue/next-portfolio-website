@@ -1,6 +1,6 @@
 import { mono, sans } from "@/lib/fonts";
 import { Contact } from "./Contact";
-import { EducationNow } from "./EducationNow";
+import { Education } from "./Education";
 import { Hero } from "./Hero";
 import { Nav } from "./Nav";
 import { Profile } from "./Profile";
@@ -19,7 +19,7 @@ export function HomePage() {
                 <Timeline />
                 <Projects />
                 <Skills />
-                <EducationNow />
+                <Education />
                 <Contact />
             </main>
         </div>

@@ -1195,12 +1195,12 @@
     line-height: 1.4;
 }
 
-/* ---------- Education & Now ---------- */
+/* ---------- Education ---------- */
 
-.site .cx-two {
+.site .cx-edu {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 16px 40px;
 }
 
 .site .cx-edu-degree {
@@ -1212,44 +1212,10 @@
 .site .cx-edu-inst {
     font-size: 15px;
     color: var(--muted);
-    margin-bottom: 8px;
 }
 
 .site .cx-meta-tight .cx-meta-row {
     grid-template-columns: 72px 1fr;
-}
-
-.site .cx-now {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.site .cx-now li {
-    display: flex;
-    gap: 12px;
-    font-size: 15px;
-    line-height: 1.55;
-}
-
-.site .cx-now-index {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    font-weight: 600;
-    padding-top: 3px;
-    flex: none;
-}
-
-.site .cx-now-status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--line);
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
 }
 
 /* ---------- Contact & footer ---------- */
@@ -1360,9 +1326,13 @@
     }
 
     .site .cx-projects,
-    .site .cx-skills,
-    .site .cx-two {
+    .site .cx-skills {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .site .cx-edu {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+        align-items: start;
     }
 
     .site .cx-node-head {

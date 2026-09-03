@@ -419,10 +419,3 @@ export const education = {
     grade: "First Class Honours",
     award: "Chancellor's Award for the highest weighted grade in Computer Science",
 } as const;
-
-/** Handy "now" facts for sidebars / footers. */
-export const now = [
-    "Founding and building Still, an AI notes assistant",
-    "Leading frontend delivery on an AI assurance platform for the Royal Navy",
-    "Fine-tuning Qwen models for note processing",
-] as const;
