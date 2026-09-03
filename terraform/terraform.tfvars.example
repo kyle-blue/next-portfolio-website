@@ -1,0 +1,17 @@
+# Copy to terraform.tfvars to override defaults (all defaults are already correct
+# for the kyle-507414 project; the file is optional).
+
+project_id     = "kyle-507414"
+project_number = "639022547931"
+region         = "europe-west4"
+environment    = "prod"
+
+service_name      = "kblue-portfolio"
+domains           = ["kblue.io", "www.kblue.io"]
+github_repository = "kyle-blue/next-portfolio-website"
+
+# Scaling / sizing. min_instances = 1 removes cold starts but costs ~£5–8/month.
+min_instances = 0
+max_instances = 1
+cpu           = "1"
+memory        = "512Mi"
