@@ -15,7 +15,7 @@
     --mono: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
     --sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
     --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-    --measure: 800px;
+    --measure: 920px;
     --rail: 240px;
 
     color-scheme: light;
@@ -403,6 +403,11 @@
     margin: 0 auto;
 }
 
+.site .cx-profile-text,
+.site .cx-contact-lead p {
+    max-width: 68ch;
+}
+
 .site .cx-hero-name {
     font-family: var(--sans);
     font-weight: 800;
@@ -448,7 +453,7 @@
 
 .site .cx-hero-summary {
     margin-top: 8px;
-    max-width: 560px;
+    max-width: 640px;
     font-size: 17px;
     line-height: 1.6;
     color: var(--muted);
@@ -1362,8 +1367,8 @@
     }
 
     .site .cx-profile {
-        grid-template-columns: 1fr 250px;
-        gap: 40px;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 48px;
     }
 }
 
@@ -1398,7 +1403,7 @@
 
     .site .cx-hero {
         min-height: 100dvh;
-        padding: 120px 48px;
+        padding: 120px 56px;
     }
 
     .site .cx-hero-corner {
@@ -1407,12 +1412,12 @@
     }
 
     .site .cx-section {
-        padding: 112px 48px;
+        padding: 112px 56px;
     }
 
     .site .cx-section + .cx-section::before {
-        left: 48px;
-        right: 48px;
+        left: 56px;
+        right: 56px;
     }
 
     .site .cx-spine {
@@ -1434,6 +1439,35 @@
 
     .site .cx-node-marker {
         left: 52px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .site {
+        --measure: 1000px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .site .cx-skills {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1440px) {
+    .site {
+        --measure: 1100px;
+    }
+
+    .site .cx-hero,
+    .site .cx-section {
+        padding-left: 72px;
+        padding-right: 72px;
+    }
+
+    .site .cx-section + .cx-section::before {
+        left: 72px;
+        right: 72px;
     }
 }
 
