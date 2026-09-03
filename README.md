@@ -2,7 +2,7 @@
 
 Personal portfolio for Kyle Doidge. Next.js 16 (App Router) + React 19 + Tailwind v4,
 built to a standalone Docker image and served from Google Cloud Run at
-[kblue.io](https://kblue.io).
+[www.kblue.io](https://www.kblue.io).
 
 Blueprint-grey, monospace-labelled design with one teal ink: an animated topographic
 height field behind the hero, a vertical experience timeline whose spine draws itself
@@ -39,7 +39,7 @@ Dockerfile              # multi-stage standalone build, non-root, port 8080
 
 1. **Infrastructure (once, by hand):** see [`terraform/README.md`](terraform/README.md).
    `terraform apply` creates the Cloud Run service, registry, CI identity and the
-   `kblue.io` domain mappings.
+   `www.kblue.io` / `kblue.io` domain mappings.
 2. **DNS:** add the Cloud Run records in Cloudflare as *DNS only* (table in the Terraform
    README).
 3. **GitHub secrets:** `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_SERVICE_ACCOUNT`

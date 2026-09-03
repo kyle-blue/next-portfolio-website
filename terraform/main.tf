@@ -259,9 +259,11 @@ resource "google_cloud_run_v2_service_iam_member" "public" {
 }
 
 # ---------------------------------------------------------------------------
-# 6. Custom domains. Requires the identity running `terraform apply` to be a
-#    verified owner of kblue.io (Search Console / Webmaster Central) — it is.
-#    Managed TLS certificates are provisioned by Google once DNS resolves.
+# 6. Custom domains. www.kblue.io is canonical; the apex redirects to it inside
+#    Next.js (see next.config.ts). Requires the identity running `terraform
+#    apply` to be a verified owner of kblue.io (Search Console / Webmaster
+#    Central) — it is. Managed TLS certificates are provisioned by Google once
+#    DNS resolves.
 # ---------------------------------------------------------------------------
 resource "google_cloud_run_domain_mapping" "web" {
   for_each = toset(var.domains)

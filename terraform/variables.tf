@@ -40,9 +40,9 @@ variable "image" {
 }
 
 variable "domains" {
-  description = "Custom domains mapped to the service. The apex is the canonical host; www redirects to it inside Next.js."
+  description = "Custom domains mapped to the service. www is the canonical host; the apex redirects to it inside Next.js."
   type        = list(string)
-  default     = ["kblue.io", "www.kblue.io"]
+  default     = ["www.kblue.io", "kblue.io"]
 }
 
 variable "github_repository" {

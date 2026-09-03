@@ -34,7 +34,7 @@ export const links = {
     },
     email: { label: "Email", href: "mailto:kyle.blue.doidge@gmail.com", handle: person.email },
     still: { label: "Still", href: "https://stillapp.io", handle: "stillapp.io" },
-    site: { label: "kblue.io", href: "https://kblue.io", handle: "kblue.io" },
+    site: { label: "kblue.io", href: "https://www.kblue.io", handle: "kblue.io" },
     cv: { label: "Download CV", href: "/Kyle-Doidge-CV.pdf", handle: "Kyle-Doidge-CV.pdf" },
 } as const;
 

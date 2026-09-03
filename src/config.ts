@@ -22,7 +22,7 @@ const configs: Record<Environment, Config> = {
     },
     production: {
         env: "production",
-        siteUrl: "https://kblue.io",
+        siteUrl: "https://www.kblue.io",
         isProduction: true,
     },
 };

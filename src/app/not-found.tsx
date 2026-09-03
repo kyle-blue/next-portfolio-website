@@ -6,7 +6,7 @@ export default function NotFound() {
             <p className="font-mono text-sm tracking-widest text-zinc-500 uppercase">404</p>
             <h1 className="text-2xl font-semibold">Nothing here.</h1>
             <Link href="/" className="text-zinc-300 underline underline-offset-4 hover:text-white">
-                Back to kblue.io
+                Back to www.kblue.io
             </Link>
         </main>
     );

@@ -9,12 +9,12 @@ const nextConfig: NextConfig = {
         formats: ["image/avif", "image/webp"],
     },
     async redirects() {
-        // Canonicalise www.kblue.io -> kblue.io (both are mapped to this Cloud Run service).
+        // Canonicalise kblue.io -> www.kblue.io (both are mapped to this Cloud Run service).
         return [
             {
                 source: "/:path*",
-                has: [{ type: "host", value: "www.kblue.io" }],
-                destination: "https://kblue.io/:path*",
+                has: [{ type: "host", value: "kblue.io" }],
+                destination: "https://www.kblue.io/:path*",
                 permanent: true,
             },
         ];

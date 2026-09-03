@@ -2,8 +2,9 @@
 
 Single flat Terraform configuration for the portfolio: Cloud Run service (scale to
 zero), Artifact Registry, Workload Identity Federation for GitHub Actions, and the
-`kblue.io` / `www.kblue.io` domain mappings. Modelled on the Still `web_frontend`
-module, minus the database/VPC/secrets that a static site does not need.
+`www.kblue.io` (canonical) / `kblue.io` (redirects to www) domain mappings. Modelled
+on the Still `web_frontend` module, minus the database/VPC/secrets that a static site
+does not need.
 
 | Item | Value |
 | --- | --- |
@@ -53,9 +54,15 @@ apply waiting on certificate provisioning:
 | `www` | CNAME | `ghs.googlehosted.com` |
 
 **Set every record to DNS only (grey cloud), not Proxied.** Google provisions and
-renews the TLS certificate itself and cannot do so behind Cloudflare's proxy. With
-DNS-only records Cloudflare's SSL mode setting is irrelevant. Certificate issuance
-takes ~15 minutes after DNS propagates; until then `https://kblue.io` returns a
+renews the TLS certificate itself and cannot do so behind Cloudflare's proxy — Google
+needs to see the real A/AAAA/CNAME records to validate the domain, and while proxied
+it only sees Cloudflare's edge IPs, so the certificate stays stuck in
+`CertificatePending` forever and Cloudflare has no valid origin certificate to
+complete a handshake with (`Error 525`). Cloudflare's redirect rules and Page Rules
+also only run on proxied traffic, so with DNS-only records they are inert regardless
+of direction — the `kblue.io` → `www.kblue.io` redirect lives entirely in
+`next.config.ts`; do not add a matching rule in Cloudflare. Certificate issuance takes
+~15 minutes after DNS propagates; until then `https://www.kblue.io` returns a
 certificate error while the `*.run.app` URL already works.
 
 ## GitHub Actions
