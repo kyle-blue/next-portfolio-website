@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent, useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { links, person } from "@/content/cv";
 import { scrollToSection } from "@/lib/scroll";
 import { type SectionId, sections } from "@/lib/sections";
@@ -21,6 +21,38 @@ const railLinks = [links.github, links.linkedin, links.email, links.cv] as const
 export function Nav() {
     const [active, setActive] = useState<SectionId>("intro");
     const [scrolled, setScrolled] = useState(false);
+    const scrollerRef = useRef<HTMLDivElement>(null);
+    const [fade, setFade] = useState<"none" | "left" | "right" | "both">("none");
+
+    // Mobile bar: keep the active section centred in the horizontal list.
+    useEffect(() => {
+        const scroller = scrollerRef.current;
+        if (!scroller) return;
+        const link = scroller.querySelector<HTMLElement>(`a[href="#${active}"]`);
+        if (!link) return;
+        const left = link.offsetLeft - (scroller.clientWidth - link.offsetWidth) / 2;
+        scroller.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    }, [active]);
+
+    // Mobile bar: fade the edges that still have content beyond them.
+    useEffect(() => {
+        const scroller = scrollerRef.current;
+        if (!scroller) return;
+        const update = () => {
+            const max = scroller.scrollWidth - scroller.clientWidth;
+            const left = scroller.scrollLeft > 4;
+            const right = scroller.scrollLeft < max - 4;
+            setFade(left && right ? "both" : left ? "left" : right ? "right" : "none");
+        };
+        update();
+        scroller.addEventListener("scroll", update, { passive: true });
+        const ro = new ResizeObserver(update);
+        ro.observe(scroller);
+        return () => {
+            scroller.removeEventListener("scroll", update);
+            ro.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         const els = sections
@@ -114,9 +146,29 @@ export function Nav() {
                     </span>
                     <span>{links.site.handle}</span>
                 </a>
-                <nav aria-label="Sections" className="cx-topbar-nav">
-                    <ol className="cx-topbar-list">{items}</ol>
-                </nav>
+                <div ref={scrollerRef} className="cx-topbar-nav" data-fade={fade}>
+                    <nav aria-label="Sections">
+                        <ol className="cx-topbar-list">{items}</ol>
+                    </nav>
+                </div>
+                <button
+                    type="button"
+                    className="cx-topbar-more"
+                    aria-label="Scroll to more sections"
+                    data-visible={fade === "right" || fade === "both" ? "true" : "false"}
+                    tabIndex={fade === "right" || fade === "both" ? 0 : -1}
+                    onClick={() => scrollerRef.current?.scrollBy({ left: 160, behavior: "smooth" })}
+                >
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+                        <path
+                            d="M6 4l4 4-4 4"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </button>
             </header>
         </>
     );

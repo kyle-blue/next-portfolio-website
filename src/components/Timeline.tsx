@@ -17,6 +17,14 @@ function TimelineNode({ item, index }: { item: Experience; index: number }) {
             ? item.sections
             : [{ title: null, bullets: item.bullets }];
 
+    // Running stagger index across groups so bullets appear in reading order.
+    const offsets: number[] = [];
+    let total = 0;
+    for (const g of groups) {
+        offsets.push(total);
+        total += g.bullets.length + (g.title ? 1 : 0);
+    }
+
     return (
         <li
             ref={ref}
@@ -81,7 +89,10 @@ function TimelineNode({ item, index }: { item: Experience; index: number }) {
                             {groups.map((g, gi) => (
                                 <div key={g.title ?? gi} className="cx-panel-group">
                                     {g.title ? (
-                                        <p className="cx-panel-title">
+                                        <p
+                                            className="cx-panel-title"
+                                            style={{ "--i": offsets[gi] } as React.CSSProperties}
+                                        >
                                             <span className="cx-panel-title-index">
                                                 {idx}.{gi + 1}
                                             </span>
@@ -89,8 +100,17 @@ function TimelineNode({ item, index }: { item: Experience; index: number }) {
                                         </p>
                                     ) : null}
                                     <ul className="cx-bullets">
-                                        {g.bullets.map((b) => (
-                                            <li key={b}>{b}</li>
+                                        {g.bullets.map((b, bi) => (
+                                            <li
+                                                key={b}
+                                                style={
+                                                    {
+                                                        "--i": offsets[gi] + 1 + bi,
+                                                    } as React.CSSProperties
+                                                }
+                                            >
+                                                {b}
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
@@ -102,6 +122,7 @@ function TimelineNode({ item, index }: { item: Experience; index: number }) {
                                     target="_blank"
                                     rel="noreferrer noopener"
                                     tabIndex={open ? 0 : -1}
+                                    style={{ "--i": total } as React.CSSProperties}
                                 >
                                     {item.link.label}
                                     <span aria-hidden="true">↗</span>
