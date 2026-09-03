@@ -1673,23 +1673,27 @@
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
+    /*
+     * Reduced motion removes travel, not feedback. Reveals and entrances become
+     * plain fades, nothing slides or nudges, the hero field runs calmly, but
+     * colour, shadow, outline, height and opacity transitions all stay so that
+     * every state change is still legible.
+     */
     .site .cx-reveal[data-visible="false"] {
-        opacity: 1;
         transform: none;
     }
 
     .site .cx-reveal[data-visible="true"] {
-        animation: none;
+        animation: cx-fade 320ms var(--ease) var(--reveal-delay, 0ms) backwards;
     }
 
-    .site .cx-node-marker {
-        background: var(--accent);
-        border-color: var(--accent);
-    }
-
-    .site .cx-hero-canvas,
     .site .cx-hero-inner > * {
-        animation: none;
+        animation-name: cx-fade;
+        animation-duration: 420ms;
+    }
+
+    .site .cx-hero-canvas {
+        animation-duration: 700ms;
     }
 
     .site .cx-rule,
@@ -1698,17 +1702,32 @@
         transition: none;
     }
 
-    .site .cx-panel,
-    .site .cx-panel-content,
-    .site .cx-node-chevron,
-    .site .cx-node-marker,
-    .site .cx-nav-link::before,
+    .site .cx-node-marker {
+        background: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .site .cx-nav-link:hover .cx-nav-label,
+    .site .cx-rail-link:hover span,
+    .site .cx-node-link:hover span,
+    .site .cx-card-link:hover span,
+    .site .cx-contact-row:hover .cx-contact-arrow {
+        transform: none;
+    }
+
     .site .cx-tip,
+    .site .cx-tip[data-open="true"] {
+        transform: translate(calc(-50% + var(--tip-shift, 0px)), 0);
+    }
+
     .site .cx-tip-caret,
-    .site .cx-tile,
-    .site .cx-card,
-    .site .cx-contact-arrow {
-        transition: none;
+    .site .cx-tip-caret[data-open="true"] {
+        transform: translate(-50%, 0) rotate(45deg);
+    }
+
+    .site .cx-panel-content,
+    .site .cx-node-card[data-open="true"] .cx-panel-content {
+        transform: none;
     }
 }
 
