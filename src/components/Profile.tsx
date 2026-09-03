@@ -5,7 +5,6 @@ import { SectionHeader } from "./SectionHeader";
 const meta = [
     { label: "Location", value: person.location },
     { label: "Availability", value: person.availability },
-    { label: "Clearance", value: person.clearance },
     { label: "Experience", value: `${person.yearsExperience} years` },
     { label: "Looking for", value: person.lookingFor },
 ];

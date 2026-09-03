@@ -31,8 +31,6 @@ export function Hero() {
                     <span>Available</span>
                     <span aria-hidden="true">·</span>
                     <span>{person.availability}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{person.clearance}</span>
                 </p>
                 <p className="cx-hero-tagline">{person.tagline}</p>
                 <p className="cx-hero-summary">{person.summary}</p>

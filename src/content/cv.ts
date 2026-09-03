@@ -14,7 +14,6 @@ export const person = {
     availability: "Remote (UK / EU)",
     email: "kyle.blue.doidge@gmail.com",
     phone: "07913 348271",
-    clearance: "SC cleared (active)",
     yearsExperience: 5,
     tagline: "I ship AI products end to end.",
     /** Short one-liner for hero subheads. */
@@ -22,7 +21,7 @@ export const person = {
         "From RAG and agent pipelines, through the backends that serve them, to the interfaces people actually use.",
     /** Full profile paragraph. */
     profile:
-        "Full stack engineer with 5 years of experience shipping products end to end, from RAG and agent pipelines through the backends that serve them to the interfaces people actually use. Founder of Still, an AI notes and assistant product built alone across Go, React Native and a fine-tuned open-weight model, and currently leading frontend delivery on an AI assurance platform for the Royal Navy under SC clearance. As comfortable owning a design system as a database migration or an eval harness. Looking for an AI product team small enough that individual ownership still counts.",
+        "Full stack engineer with 5 years of experience shipping products end to end, from RAG and agent pipelines through the backends that serve them to the interfaces people actually use. Founder of Still, an AI notes and assistant product built alone across Go, React Native and a fine-tuned open-weight model, and currently leading frontend delivery on an AI assurance platform for the Royal Navy. As comfortable owning a design system as a database migration or an eval harness. Looking for an AI product team small enough that individual ownership still counts.",
     lookingFor: "An AI product team small enough that individual ownership still counts.",
 } as const;
 
@@ -124,7 +123,7 @@ export const experience: Experience[] = [
         start: "2025-08",
         end: null,
         period: "Aug 2025 — Present",
-        location: "Remote · SC Cleared",
+        location: "Remote",
         blurb: "UK defence and central government clients",
         summary:
             "Delivering software for UK defence and central government clients, across greenfield AI product development and modernisation of large microservice estates.",
