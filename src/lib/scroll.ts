@@ -31,8 +31,7 @@ export function scrollToSection(id: string, offset = 0): void {
         el.focus({ preventScroll: true });
     };
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced || Math.abs(distance) < 2) {
+    if (Math.abs(distance) < 2) {
         window.scrollTo({ top: targetY, behavior: "instant" });
         finish();
         return;
@@ -40,7 +39,10 @@ export function scrollToSection(id: string, offset = 0): void {
 
     if (active !== null) cancelAnimationFrame(active);
     // Short and snappy: ~320ms nearby, capped at 700ms for a full-page hop.
-    const duration = Math.min(700, 260 + Math.abs(distance) * 0.18);
+    // Reduced motion keeps the ease (an instant jump is more disorienting) but
+    // caps it at 360ms.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const duration = Math.min(reduced ? 360 : 700, 260 + Math.abs(distance) * 0.18);
     const t0 = performance.now();
 
     const cancel = () => {

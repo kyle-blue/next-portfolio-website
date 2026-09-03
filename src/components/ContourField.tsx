@@ -22,10 +22,10 @@ const LENS_R = 320;
 const LENS_SIGMA = 128;
 const LENS_AMP = 0.7;
 /** How far (in noise units) the whole field slides as the pointer crosses the hero. */
-const PARALLAX = 0.45;
+const PARALLAX = 0.55;
 /** Time evolution: XY drift and the Z (third noise axis) sweep, in units per second. */
 const DRIFT_RATE = 0.03;
-const EVOLVE_RATE = 0.11;
+const EVOLVE_RATE = 0.13;
 const NOISE_SCALE = 0.17;
 
 const LINE = "rgba(31, 41, 51, 0.13)";
@@ -319,7 +319,11 @@ export function ContourField({ className }: { className?: string }) {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        // Reduced motion runs the field in a calm mode: slower evolution, no
+        // autonomous wandering, smaller lens. Pointer-driven response is kept
+        // because it is user-initiated.
+        const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const timeScale = calm ? 0.4 : 1;
         const finePointer = window.matchMedia("(pointer: fine)").matches;
 
         let state: FieldState | null = null;
@@ -351,15 +355,6 @@ export function ContourField({ className }: { className?: string }) {
                 lensY = h * 0.42;
                 started = true;
             }
-            if (reduced) drawStatic();
-        };
-
-        const drawStatic = () => {
-            if (!state) return;
-            const still: Lens = { x: -1e4, y: -1e4, amp: 0, shiftX: 0, shiftY: 0 };
-            buildField(state, 4.2, still);
-            extractContours(state, still);
-            render(ctx, state, still);
         };
 
         const frame = (now: number) => {
@@ -367,7 +362,7 @@ export function ContourField({ className }: { className?: string }) {
             if (!visible || document.hidden || !state) return;
             const dt = last === 0 ? 16 : Math.min(50, now - last);
             last = now;
-            time += dt / 1000;
+            time += (dt / 1000) * timeScale;
 
             let targetX: number;
             let targetY: number;
@@ -378,8 +373,13 @@ export function ContourField({ className }: { className?: string }) {
                 targetY = pointerClientY - rect.top;
                 // Faster pointer movement pushes the lens harder, so the field visibly
                 // responds to gestures rather than only to position.
-                targetAmp = 1 + Math.min(0.7, pointerSpeed * 0.0009);
+                targetAmp = (calm ? 0.7 : 1) + Math.min(calm ? 0.25 : 0.7, pointerSpeed * 0.0009);
                 pointerSpeed *= 0.9;
+            } else if (calm) {
+                // Rest position, gentle amplitude, no wandering.
+                targetX = state.width * 0.62;
+                targetY = state.height * 0.42;
+                targetAmp = 0.3;
             } else {
                 // Autonomous drift on a slow Lissajous path.
                 targetX = state.width * (0.5 + 0.36 * Math.sin(time * 0.11));
@@ -403,7 +403,7 @@ export function ContourField({ className }: { className?: string }) {
         };
 
         const start = () => {
-            if (reduced || raf !== 0) return;
+            if (raf !== 0) return;
             last = 0;
             raf = requestAnimationFrame(frame);
         };
@@ -413,7 +413,7 @@ export function ContourField({ className }: { className?: string }) {
         };
 
         const onPointerMove = (e: PointerEvent) => {
-            if (reduced || !finePointer) return;
+            if (!finePointer) return;
             const now = performance.now();
             if (pointerActive && lastPointerT > 0) {
                 const dt = Math.max(1, now - lastPointerT);
