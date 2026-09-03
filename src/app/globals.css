@@ -11,6 +11,8 @@
 
 html {
     scroll-behavior: smooth;
+    /* Native hash loads (e.g. /#experience) clear the mobile top bar. */
+    scroll-padding-top: 56px;
     -webkit-text-size-adjust: 100%;
 }
 

@@ -1,8 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { links, person } from "@/content/cv";
+import { scrollToSection } from "@/lib/scroll";
 import { type SectionId, sections } from "@/lib/sections";
+
+/** Height of the fixed top bar shown below the desktop breakpoint. */
+const TOPBAR_OFFSET = 56;
+
+function onSectionClick(e: MouseEvent<HTMLAnchorElement>, id: SectionId) {
+    // Let modified clicks (new tab etc.) behave natively.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    const offset = window.matchMedia("(min-width: 1024px)").matches ? 0 : TOPBAR_OFFSET;
+    scrollToSection(id, offset);
+}
 
 const railLinks = [links.github, links.linkedin, links.email, links.cv] as const;
 
@@ -38,6 +50,7 @@ export function Nav() {
             <a
                 href={`#${s.id}`}
                 className="cx-nav-link"
+                onClick={(e) => onSectionClick(e, s.id)}
                 data-active={active === s.id ? "true" : "false"}
                 aria-current={active === s.id ? "location" : undefined}
             >
@@ -50,7 +63,8 @@ export function Nav() {
     return (
         <>
             <aside className="cx-rail" aria-label="Site navigation">
-                <a href="#intro" className="cx-brand">
+                {/* biome-ignore lint/a11y/useValidAnchor: in-page navigation; the href works without JS, the handler only eases the scroll. */}
+                <a href="#intro" className="cx-brand" onClick={(e) => onSectionClick(e, "intro")}>
                     <span className="cx-brand-mark" aria-hidden="true">
                         KD
                     </span>
@@ -89,7 +103,12 @@ export function Nav() {
             </aside>
 
             <header className="cx-topbar" data-scrolled={scrolled ? "true" : "false"}>
-                <a href="#intro" className="cx-topbar-brand">
+                {/* biome-ignore lint/a11y/useValidAnchor: in-page navigation; the href works without JS, the handler only eases the scroll. */}
+                <a
+                    href="#intro"
+                    className="cx-topbar-brand"
+                    onClick={(e) => onSectionClick(e, "intro")}
+                >
                     <span className="cx-brand-mark" aria-hidden="true">
                         KD
                     </span>
