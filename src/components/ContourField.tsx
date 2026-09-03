@@ -18,13 +18,18 @@ const FINE = COARSE / SUB;
 const LEVELS = 10;
 const LEVEL_MIN = 0.16;
 const LEVEL_STEP = 0.068;
-const LENS_R = 260;
-const LENS_SIGMA = 96;
-const LENS_AMP = 0.5;
+const LENS_R = 320;
+const LENS_SIGMA = 128;
+const LENS_AMP = 0.7;
+/** How far (in noise units) the whole field slides as the pointer crosses the hero. */
+const PARALLAX = 0.45;
+/** Time evolution: XY drift and the Z (third noise axis) sweep, in units per second. */
+const DRIFT_RATE = 0.03;
+const EVOLVE_RATE = 0.11;
 const NOISE_SCALE = 0.17;
 
-const LINE = "rgba(31, 41, 51, 0.10)";
-const INDEX_LINE = "rgba(31, 41, 51, 0.19)";
+const LINE = "rgba(31, 41, 51, 0.13)";
+const INDEX_LINE = "rgba(31, 41, 51, 0.24)";
 const CROSS = "rgba(31, 41, 51, 0.14)";
 
 function hash3(x: number, y: number, z: number): number {
@@ -110,6 +115,9 @@ interface Lens {
     x: number;
     y: number;
     amp: number;
+    /** Field offset driven by pointer position (parallax), in noise units. */
+    shiftX: number;
+    shiftY: number;
 }
 
 interface FieldState {
@@ -148,13 +156,13 @@ function makeState(width: number, height: number): FieldState {
 
 function buildField(s: FieldState, time: number, lens: Lens): void {
     const { coarseW, coarseH, fineW, fineH, coarse, row, fine } = s;
-    const drift = time * 0.012;
-    const z = time * 0.045;
+    const drift = time * DRIFT_RATE;
+    const z = time * EVOLVE_RATE;
     for (let j = 0; j < coarseH; j++) {
         for (let i = 0; i < coarseW; i++) {
             coarse[j * coarseW + i] = fbm(
-                (i - 1) * NOISE_SCALE + drift,
-                (j - 1) * NOISE_SCALE * 1.15,
+                (i - 1) * NOISE_SCALE + drift + lens.shiftX,
+                (j - 1) * NOISE_SCALE * 1.15 + lens.shiftY,
                 z,
             );
         }
@@ -292,7 +300,7 @@ function render(ctx: CanvasRenderingContext2D, s: FieldState, lens: Lens): void 
     }
     if (lens.amp > 0.001 && s.lensSegs.length > 0) {
         const g = ctx.createRadialGradient(lens.x, lens.y, 0, lens.x, lens.y, LENS_R);
-        const a = 0.7 * lens.amp;
+        const a = Math.min(0.95, 0.75 * lens.amp);
         g.addColorStop(0, `rgba(15, 118, 110, ${a})`);
         g.addColorStop(0.55, `rgba(15, 118, 110, ${a * 0.55})`);
         g.addColorStop(1, "rgba(15, 118, 110, 0)");
@@ -322,7 +330,9 @@ export function ContourField({ className }: { className?: string }) {
         let pointerActive = false;
         let pointerClientX = 0;
         let pointerClientY = 0;
-        const lens: Lens = { x: -1e4, y: -1e4, amp: 0 };
+        let pointerSpeed = 0;
+        let lastPointerT = 0;
+        const lens: Lens = { x: -1e4, y: -1e4, amp: 0, shiftX: 0, shiftY: 0 };
         let lensX = 0;
         let lensY = 0;
         let started = false;
@@ -346,7 +356,7 @@ export function ContourField({ className }: { className?: string }) {
 
         const drawStatic = () => {
             if (!state) return;
-            const still: Lens = { x: -1e4, y: -1e4, amp: 0 };
+            const still: Lens = { x: -1e4, y: -1e4, amp: 0, shiftX: 0, shiftY: 0 };
             buildField(state, 4.2, still);
             extractContours(state, still);
             render(ctx, state, still);
@@ -366,18 +376,25 @@ export function ContourField({ className }: { className?: string }) {
                 const rect = canvas.getBoundingClientRect();
                 targetX = pointerClientX - rect.left;
                 targetY = pointerClientY - rect.top;
-                targetAmp = 1;
+                // Faster pointer movement pushes the lens harder, so the field visibly
+                // responds to gestures rather than only to position.
+                targetAmp = 1 + Math.min(0.7, pointerSpeed * 0.0009);
+                pointerSpeed *= 0.9;
             } else {
                 // Autonomous drift on a slow Lissajous path.
                 targetX = state.width * (0.5 + 0.36 * Math.sin(time * 0.11));
                 targetY = state.height * (0.5 + 0.3 * Math.cos(time * 0.083));
                 targetAmp = 0.45;
             }
-            lensX += (targetX - lensX) * 0.1;
-            lensY += (targetY - lensY) * 0.1;
-            lens.amp += (targetAmp - lens.amp) * 0.06;
+            lensX += (targetX - lensX) * 0.11;
+            lensY += (targetY - lensY) * 0.11;
+            lens.amp += (targetAmp - lens.amp) * 0.08;
             lens.x = lensX;
             lens.y = lensY;
+            // Slide the whole field a little against the pointer so contours away
+            // from the lens still react (a slow parallax, not a jump).
+            lens.shiftX = (lensX / state.width - 0.5) * PARALLAX;
+            lens.shiftY = (lensY / state.height - 0.5) * PARALLAX * 0.6;
 
             buildField(state, time, lens);
             extractContours(state, lens);
@@ -397,6 +414,14 @@ export function ContourField({ className }: { className?: string }) {
 
         const onPointerMove = (e: PointerEvent) => {
             if (reduced || !finePointer) return;
+            const now = performance.now();
+            if (pointerActive && lastPointerT > 0) {
+                const dt = Math.max(1, now - lastPointerT);
+                const dx = e.clientX - pointerClientX;
+                const dy = e.clientY - pointerClientY;
+                pointerSpeed = Math.min(1500, (Math.hypot(dx, dy) / dt) * 1000);
+            }
+            lastPointerT = now;
             pointerClientX = e.clientX;
             pointerClientY = e.clientY;
             pointerActive = true;
