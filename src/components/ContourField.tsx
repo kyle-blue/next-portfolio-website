@@ -18,11 +18,11 @@ const FINE = COARSE / SUB;
 const LEVELS = 10;
 const LEVEL_MIN = 0.16;
 const LEVEL_STEP = 0.068;
-const LENS_R = 320;
-const LENS_SIGMA = 128;
-const LENS_AMP = 0.7;
+const LENS_R = 280;
+const LENS_SIGMA = 118;
+const LENS_AMP = 0.42;
 /** How far (in noise units) the whole field slides as the pointer crosses the hero. */
-const PARALLAX = 0.55;
+const PARALLAX = 0.28;
 /** Time evolution: XY drift and the Z (third noise axis) sweep, in units per second. */
 const DRIFT_RATE = 0.03;
 const EVOLVE_RATE = 0.13;
@@ -300,7 +300,7 @@ function render(ctx: CanvasRenderingContext2D, s: FieldState, lens: Lens): void 
     }
     if (lens.amp > 0.001 && s.lensSegs.length > 0) {
         const g = ctx.createRadialGradient(lens.x, lens.y, 0, lens.x, lens.y, LENS_R);
-        const a = Math.min(0.95, 0.75 * lens.amp);
+        const a = Math.min(0.7, 0.55 * lens.amp);
         g.addColorStop(0, `rgba(15, 118, 110, ${a})`);
         g.addColorStop(0.55, `rgba(15, 118, 110, ${a * 0.55})`);
         g.addColorStop(1, "rgba(15, 118, 110, 0)");
@@ -373,8 +373,8 @@ export function ContourField({ className }: { className?: string }) {
                 targetY = pointerClientY - rect.top;
                 // Faster pointer movement pushes the lens harder, so the field visibly
                 // responds to gestures rather than only to position.
-                targetAmp = (calm ? 0.7 : 1) + Math.min(calm ? 0.25 : 0.7, pointerSpeed * 0.0009);
-                pointerSpeed *= 0.9;
+                targetAmp = (calm ? 0.6 : 1) + Math.min(calm ? 0.1 : 0.25, pointerSpeed * 0.0004);
+                pointerSpeed *= 0.92;
             } else if (calm) {
                 // Rest position, gentle amplitude, no wandering.
                 targetX = state.width * 0.62;
@@ -386,9 +386,10 @@ export function ContourField({ className }: { className?: string }) {
                 targetY = state.height * (0.5 + 0.3 * Math.cos(time * 0.083));
                 targetAmp = 0.45;
             }
-            lensX += (targetX - lensX) * 0.11;
-            lensY += (targetY - lensY) * 0.11;
-            lens.amp += (targetAmp - lens.amp) * 0.08;
+            // Heavy, slow follow so the lens glides rather than snaps to the pointer.
+            lensX += (targetX - lensX) * 0.055;
+            lensY += (targetY - lensY) * 0.055;
+            lens.amp += (targetAmp - lens.amp) * 0.05;
             lens.x = lensX;
             lens.y = lensY;
             // Slide the whole field a little against the pointer so contours away
