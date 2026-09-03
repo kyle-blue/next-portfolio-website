@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Pre-commit hook: format + lint-fix staged files with Biome, then type-check.
+# Installed automatically via `pnpm install` (see "prepare" in package.json).
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR \
+    | grep -E '\.(ts|tsx|js|jsx|json|css)$' || true)
+
+if [ -n "$STAGED" ]; then
+    echo "▶  biome: formatting and fixing staged files…"
+    echo "$STAGED" | xargs pnpm exec biome check --write --no-errors-on-unmatched
+    echo "$STAGED" | xargs git add
+fi
+
+echo "▶  tsc: type checking…"
+pnpm exec tsc --noEmit
+
+if git diff --cached --name-only | grep -qE '^terraform/.*\.tf$'; then
+    if command -v terraform >/dev/null 2>&1; then
+        echo "▶  terraform fmt…"
+        terraform -chdir=terraform fmt -check -recursive
+    fi
+fi

@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+/*
+ * Root stylesheet. Each draft under src/drafts/<name>/ ships its own
+ * stylesheet scoped to its root class, so nothing here should impose a look.
+ */
+
+:root {
+    color-scheme: dark;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    background: #0b0b0e;
+    color: #f4f4f5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}

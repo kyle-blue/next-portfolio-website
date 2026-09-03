@@ -1,0 +1,83 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "includes": [
+            "**/*.ts",
+            "**/*.tsx",
+            "**/*.js",
+            "**/*.jsx",
+            "**/*.mjs",
+            "**/*.cjs",
+            "**/*.json",
+            "**/*.jsonc",
+            "**/*.css",
+            "!**/node_modules",
+            "!**/.next",
+            "!**/dist",
+            "!**/build",
+            "!**/coverage",
+            "!**/next-env.d.ts",
+            "!**/pnpm-lock.yaml",
+            "!**/terraform"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 100,
+        "lineEnding": "lf"
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "double",
+            "jsxQuoteStyle": "double",
+            "semicolons": "always",
+            "trailingCommas": "all",
+            "arrowParentheses": "always",
+            "bracketSpacing": true,
+            "bracketSameLine": false
+        }
+    },
+    "json": {
+        "formatter": { "indentWidth": 4 }
+    },
+    "css": {
+        "parser": { "cssModules": true, "tailwindDirectives": true },
+        "formatter": { "indentWidth": 4, "quoteStyle": "double" }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "preset": "recommended",
+            "style": {
+                "useImportType": "error",
+                "useNodejsImportProtocol": "error",
+                "noNonNullAssertion": "warn"
+            },
+            "suspicious": {
+                "noExplicitAny": "warn",
+                "noConsole": { "level": "warn", "options": { "allow": ["warn", "error"] } }
+            },
+            "correctness": {
+                "noUnusedImports": "error",
+                "noUnusedVariables": "error"
+            },
+            "a11y": {
+                "preset": "recommended"
+            }
+        }
+    },
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": "on"
+            }
+        }
+    }
+}
