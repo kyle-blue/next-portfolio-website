@@ -1,6 +1,11 @@
 import { mono, sans } from "@/lib/fonts";
+import { Contact } from "./Contact";
+import { EducationNow } from "./EducationNow";
 import { Hero } from "./Hero";
 import { Nav } from "./Nav";
+import { Profile } from "./Profile";
+import { Projects } from "./Projects";
+import { Skills } from "./Skills";
 import { Timeline } from "./Timeline";
 import "@/styles/site.css";
 
@@ -10,7 +15,12 @@ export function HomePage() {
             <Nav />
             <main id="main" className="cx-main">
                 <Hero />
+                <Profile />
                 <Timeline />
+                <Projects />
+                <Skills />
+                <EducationNow />
+                <Contact />
             </main>
         </div>
     );
