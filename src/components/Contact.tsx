@@ -61,7 +61,7 @@ export function Contact() {
                     <span aria-hidden="true"> · </span>
                     <span>Next.js</span>
                     <span aria-hidden="true"> · </span>
-                    <span>rev. contour</span>
+                    <span>Cloud Run</span>
                 </p>
             </footer>
         </section>
