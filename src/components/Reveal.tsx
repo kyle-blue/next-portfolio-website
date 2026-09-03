@@ -8,7 +8,7 @@ interface RevealProps {
     className?: string;
     /** Stagger slot (0–7); each slot adds 50ms. */
     delay?: number;
-    as?: "div" | "li" | "article" | "section";
+    as?: "div" | "li" | "article" | "section" | "header";
     id?: string;
 }
 

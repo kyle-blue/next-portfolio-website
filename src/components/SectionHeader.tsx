@@ -1,4 +1,5 @@
 import { type SectionId, sectionIndex } from "@/lib/sections";
+import { Reveal } from "./Reveal";
 
 interface SectionHeaderProps {
     id: SectionId;
@@ -10,7 +11,7 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ id, title, eyebrow, note }: SectionHeaderProps) {
     return (
-        <header className="cx-sh">
+        <Reveal as="header" className="cx-sh">
             <p className="cx-eyebrow">
                 <span className="cx-eyebrow-index">{sectionIndex(id)}</span>
                 <span aria-hidden="true">/</span>
@@ -25,6 +26,6 @@ export function SectionHeader({ id, title, eyebrow, note }: SectionHeaderProps) 
             <div className="cx-rule" aria-hidden="true">
                 <span className="cx-rule-sq" />
             </div>
-        </header>
+        </Reveal>
     );
 }
