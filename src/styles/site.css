@@ -118,8 +118,7 @@
     transition:
         box-shadow 180ms var(--ease),
         color 180ms var(--ease),
-        background-color 180ms var(--ease),
-        transform 180ms var(--ease);
+        background-color 180ms var(--ease);
 }
 
 .site .cx-btn:hover {
@@ -127,11 +126,11 @@
         inset 0 0 0 1px var(--accent),
         var(--lift-shadow);
     color: var(--accent);
-    transform: translateY(-1px);
 }
 
 .site .cx-btn:active {
-    transform: translateY(0);
+    box-shadow: inset 0 0 0 1px var(--accent);
+    background: var(--surface-2);
     transition-duration: 80ms;
 }
 
@@ -1135,9 +1134,9 @@
     cursor: default;
     box-shadow: inset 0 0 0 1px transparent;
     transition:
-        color 160ms var(--ease),
-        box-shadow 160ms var(--ease),
-        transform 160ms var(--ease);
+        color 180ms var(--ease),
+        box-shadow 180ms var(--ease),
+        background-color 180ms var(--ease);
 }
 
 .site .cx-tile-mono {
@@ -1150,8 +1149,10 @@
 .site .cx-tile-wrap:hover .cx-tile,
 .site .cx-tile:focus-visible {
     color: var(--tech-color, var(--accent));
-    box-shadow: inset 0 0 0 1px var(--line-strong);
-    transform: translateY(-1px);
+    background: var(--surface-2);
+    box-shadow:
+        inset 0 0 0 1px var(--line-strong),
+        0 2px 8px rgba(31, 41, 51, 0.08);
 }
 
 .site .cx-tip {
@@ -1244,13 +1245,10 @@
     border: 1px solid var(--line);
     border-radius: 6px;
     box-shadow: inset 0 0 0 1px transparent;
-    transition:
-        transform 220ms var(--ease-out),
-        box-shadow 220ms var(--ease);
+    transition: box-shadow 220ms var(--ease);
 }
 
 .site .cx-card:hover {
-    transform: translateY(-2px);
     box-shadow:
         inset 0 0 0 1px var(--line-strong),
         var(--lift-shadow);
@@ -1733,10 +1731,18 @@
 
 /* ---------- Focus ---------- */
 
-/* Last so it wins over hover box-shadows; outline never affects layout. */
-.site :is(a, button, [tabindex]):focus-visible {
-    outline: 2px solid var(--blue);
+/* Outline never affects layout, so it is always present (transparent) and only
+   its colour transitions. Last so it wins over hover box-shadows. */
+.site :is(a, button, [tabindex]) {
+    outline: 2px solid transparent;
     outline-offset: 2px;
+    transition-property: color, background-color, box-shadow, outline-color, transform, opacity;
+    transition-duration: 160ms;
+    transition-timing-function: var(--ease);
+}
+
+.site :is(a, button, [tabindex]):focus-visible {
+    outline-color: var(--blue);
     border-radius: 4px;
 }
 
