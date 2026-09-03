@@ -1,0 +1,68 @@
+name: "Quality Assurance"
+
+on:
+    pull_request:
+        branches: [main]
+    workflow_call:
+
+concurrency:
+    group: qa-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    lint:
+        name: Lint + Format (Biome)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: "24"
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm lint
+
+    typecheck:
+        name: TypeScript
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: "24"
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm typecheck
+
+    build:
+        name: Next build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: "24"
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm build
+              env:
+                  NEXT_PUBLIC_ENVIRONMENT: production
+                  NEXT_TELEMETRY_DISABLED: "1"
+
+    terraform:
+        name: Terraform fmt + validate
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: terraform
+        steps:
+            - uses: actions/checkout@v7
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "~1.14"
+            - run: terraform fmt -check -recursive
+            - run: terraform init -backend=false -input=false
+            - run: terraform validate -no-color
